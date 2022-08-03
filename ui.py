@@ -7,10 +7,29 @@ import resources
 
 
 # DEV GLOBALS
-
+is_mobile = True
+try:
+    import android
+except ImportError:
+    is_mobile = False
 
 # OPTION GLOBALS
 
+
+def _thd_loading_screen_while(function, args, reset=True):
+    from screens import LOADING
+    prevscreen = render.screen
+    render.screen = "LOADING"
+    if reset:
+        LOADING.reset()
+    function(*args)
+    render.screen = prevscreen
+    # LOADING.reset()
+
+def loading_screen_while(function, args, reset=True):
+    thd = threading.Thread(target=_thd_loading_screen_while, args=(function, args, reset), daemon=True)
+    thd.start()
+    return thd
 
 def default_log(msg):
     """ 

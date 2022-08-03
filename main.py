@@ -1,4 +1,5 @@
-import sys
+# from sys import argv
+import threading
 import pygame
 import render
 import ui
@@ -28,5 +29,5 @@ if __name__ == "__main__":
 
     # Maybe Load Save Data
     # Join render loading threads
-
+    threading.Thread(target=devconsole, daemon=True).start()
     run()

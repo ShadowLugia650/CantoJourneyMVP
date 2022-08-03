@@ -211,21 +211,83 @@ class AssetStorage:
 
 
 class Button:
-    def __init__(self, pos, sprite):
+    """
+    A class representing a button on screen, with the ability to detect mouse
+        collision and display on a surface
+
+    Attributes:
+        pos: (int or float, int or float): The position at which to display 
+            this button
+        sprite: pygame.Surface: The sprite of the button to be displayed
+    """
+
+    def __init__(self, pos, sprite: pygame.Surface):
+        """
+        Constructs a new Button object
+
+        Params:
+            pos: (int or float, int or float): The position at which to display
+                this button
+            sprite: pygame.Surface: The sprite of the button to be displayed
+        """
         self.pos = pos
         self.sprite = sprite
 
+    def move(self, new_pos):
+        """
+        Move this button to a new position 
+
+        Params:
+            new_pos: (int or float, int or float): The position to move this
+                button to
+        """
+        self.pos = new_pos
+
     def resize(self, new_size):
+        """
+        Resize the sprite of this button
+
+        Params:
+            new_size: int, float, (int or float, int or float): The new size to
+                resize the sprite to. If provided as an int or float, 
+                multiplies the width and height by that value, otherwise 
+                provides the new width and height to use
+        """
         if type(new_size) in [int, float, tuple, list]:
             self.sprite = pygame.transform.scale(self.sprite, new_size if type(new_size) in [tuple, list] else (int(round(self.sprite.get_width() * new_size)), int(round(self.sprite.get_height() * new_size))))
 
     def collide_point(self, point):
+        """
+        Determines if a given point collides with this button
+
+        Params:
+            point: (int or float, int or float): The position to check 
+                collision with.
+        """
         return pygame.Rect(self.pos, self.sprite.get_size()).collidepoint(point)
 
-    def collide_rect(self, rect):
+    def collide_rect(self, rect: pygame.Rect):
+        """
+        Determines if a given rectangle collides with this button
+
+        Params:
+            rect: pygame.Rect: the rectangle to check collision with
+        """
         return pygame.Rect(self.pos, self.sprite.get_size()).colliderect(rect)
 
-    def blit_on(self, surface, offset=(0, 0), with_centered=None):
+    def blit_on(self, surface: pygame.Surface, offset=(0, 0), with_centered: pygame.Surface=None):
+        """
+        Blits (displays) this button on a given surface at the specified 
+            position
+
+        Params:
+            surface: pygame.Surface: The surface on which to display this 
+                button
+            offset: (int or float, int or float) = (0, 0): The offset from this
+                button's position to display at
+            with_centered: pygame.Surface = None: A surface to display at the
+                center of this button (pasted on top)
+        """
         surface.blit(self.sprite, (self.pos[0] + offset[0], self.pos[1] + offset[1]))
         if with_centered:
             surface.blit(with_centered, (self.pos[0] + offset[0] + self.sprite.get_width() / 2 - with_centered.get_width() / 2, self.pos[1] + offset[1] + self.sprite.get_height() / 2 - with_centered.get_height() / 2))
