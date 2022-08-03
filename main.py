@@ -7,6 +7,8 @@ import ui
 pygame.init()
 
 
+
+
 def run():
     while True:
         for event in pygame.event.get():
