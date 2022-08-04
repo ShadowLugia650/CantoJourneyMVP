@@ -38,7 +38,6 @@ assets = resources.AssetStorage(
 def load_assets(subdir):
     from screens import LOADING
     LOADING.inc_load_total(len(listdir(path.join(RES_DIR, subdir))))
-    print(LOADING.load_total)
     for f in listdir(path.join(RES_DIR, subdir)):
         # TODO: make it so we can also load SVG, in addition to PNG
         # Hint: consider checking the following

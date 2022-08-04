@@ -29,5 +29,6 @@ if __name__ == "__main__":
 
     # Maybe Load Save Data
     # Join render loading threads
-    threading.Thread(target=devconsole, daemon=True).start()
+    if not ui.is_mobile:
+        threading.Thread(target=devconsole, daemon=True).start()
     run()
