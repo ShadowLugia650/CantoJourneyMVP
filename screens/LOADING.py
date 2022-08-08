@@ -44,7 +44,9 @@ def update_load_bar():
     # this function is called, we can check the percentage against the old 
     # stored one
     # Aaron's notes:
-    # float x = current percentage, float y = old percentage. y = 0. if x >= y, y = x. if x > 100, break.
+    # float x = current percentage (load_complete / load_total), float y = old percentage (what x was before). y = 0. if x >= y, y = x. if x > 100, break (kinda unneeded).
+    float
+
     global loading_bar
     load_lock.acquire()
     loading_bar = pygame.Surface((int(round(BAR_SIZE[0] * load_complete / (load_total if load_total > 0 else 1))), BAR_SIZE[1]), pygame.SRCALPHA)
