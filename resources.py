@@ -309,7 +309,9 @@ class FontFamily:
 
 def scaled_font_set(font_sizes, downscale=(1, 1)):
     assets = AssetStorage(**{
-        attr: (pygame.font.Font if font_sizes.__dict__[font_sizes.__dict__[attr][0]][1] else pygame.font.SysFont)(font_sizes.__dict__[font_sizes.__dict__[attr][0]], round(int(font_sizes.__dict__[attr][1:]) * downscale[0])) for attr in font_sizes.attrs() if "font" in attr
+        # attr: (pygame.font.Font if font_sizes.__dict__[font_sizes.__dict__[attr][0]][1] else pygame.font.SysFont)(font_sizes.__dict__[font_sizes.__dict__[attr][0]], round(int(font_sizes.__dict__[attr][1:]) * downscale[0])) for attr in font_sizes.attrs() if len(attr) > 1#"font" in attr
+        attr: (pygame.font.Font if font_sizes.get(font_sizes.get(attr)[0])[1] else pygame.font.SysFont)(font_sizes.get(font_sizes.get(attr)[0])[0], round(int(font_sizes.get(attr)[1:]) * downscale[0])) for attr in font_sizes.attrs() if len(attr) > 1
+        # attr: (pygame.font.Font if font_sizes.__dict__[font_sizes.__dict__[attr][0]][1] else pygame.font.SysFont)(font_sizes.__dict__[font_sizes.__dict__[attr][0]][0], round(int(font_sizes.__dict__[attr][1:]) * downscale_by[0])) for attr in font_sizes.attrs() if "font" in attr
     })
     return assets
 

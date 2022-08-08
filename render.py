@@ -47,13 +47,18 @@ def load_assets(subdir):
             if "_" in f:
                 # loads the file into assets
                 type_, name, version = f[:-4].split("_")
-                assets.insert(subdir+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f)))
+                assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f)))
         if path.isdir(path.join(RES_DIR, subdir, f)):
             if "_" in f:
                 # loads the latest version of the file into assets
                 type_, name = f.split("_")
                 version = len(listdir(path.join(RES_DIR, subdir, f)))
-                assets.insert(subdir+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
+                assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
+            else:
+                for sf in listdir(path.join(RES_DIR, subdir, f)):
+                    if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
+                        type_, name, version = sf[:-4].split("_")
+                        assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, sf)))
         LOADING.inc_load_complete(1)
         LOADING.update_load_bar()
 
@@ -61,15 +66,15 @@ def load_assets(subdir):
 ui.loading_screen_while(load_assets, ("icons",))
 ui.loading_screen_while(load_assets, ("img",), reset=False)
 
-def scaled_font_set(downscale_by=True):
-    if downscale_by == True:
-        downscale_by = downscale
-    assets = resources.AssetStorage(**{
-        attr: (pygame.font.Font if font_sizes.__dict__[font_sizes.__dict__[attr][0]][1] else pygame.font.SysFont)(font_sizes.__dict__[font_sizes.__dict__[attr][0]][0], round(int(font_sizes.__dict__[attr][1:]) * downscale_by[0])) for attr in font_sizes.attrs() if "font" in attr
-    })
-    return assets
+# def scaled_font_set(downscale_by=True):
+#     if downscale_by == True:
+#         downscale_by = downscale
+#     assets = resources.AssetStorage(**{
+#         attr: (pygame.font.Font if font_sizes.__dict__[font_sizes.__dict__[attr][0]][1] else pygame.font.SysFont)(font_sizes.__dict__[font_sizes.__dict__[attr][0]][0], round(int(font_sizes.__dict__[attr][1:]) * downscale_by[0])) for attr in font_sizes.attrs() if "font" in attr
+#     })
+#     return assets
 
-fs = scaled_font_set(downscale)
+fs = resources.scaled_font_set(font_sizes, downscale)
 
 def blit_running_anims():
     for a in set(running_anims.keys()):
@@ -92,4 +97,6 @@ def update():
     if screen in dir(screens) and hasattr(screens.__dict__[screen], "update"):
         screens.__dict__[screen].update()
     # blit_running_anims()
+    if __import__("player").sprite:
+        canvas.blit(__import__("player").sprite, (0, 0))
     pygame.display.update()
