@@ -27,6 +27,9 @@ customs = resources.AssetStorage(
 sprite = None
 head_sprite = None
 
+# other data
+seat = "14A"
+
 def generate_sprite():
     global sprite, head_sprite
     sprite = pygame.Surface(render.assets.img.PChara.Body.get("0").get_size(), pygame.SRCALPHA)
