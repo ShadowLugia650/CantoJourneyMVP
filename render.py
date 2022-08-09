@@ -6,6 +6,8 @@ import resources
 import ui
 
 
+FPS = 60
+fpsClock = pygame.time.Clock()
 screen = "START"
 RES_DIR = "Assets"
 # TODO: scale up to PC later
@@ -49,6 +51,7 @@ def load_assets(subdir):
                 type_, name, version = f[:-4].split("_")
                 assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f)))
         if path.isdir(path.join(RES_DIR, subdir, f)):
+            # FIX updating load total and complete for subdir
             if "_" in f:
                 # loads the latest version of the file into assets
                 type_, name = f.split("_")
@@ -100,3 +103,4 @@ def update():
     if __import__("player").sprite:
         canvas.blit(__import__("player").sprite, (0, 0))
     pygame.display.update()
+    fpsClock.tick(FPS)
