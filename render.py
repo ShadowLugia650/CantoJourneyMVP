@@ -18,18 +18,10 @@ running_anims = {}
 animid = 0
 font_sizes = resources.AssetStorage(
     # s=("Assets/INSERTFONTFILE", True),
-    p=("Calibri", False),
-    # titlefont="s72",
-    # hdrfont="s60",
-    # pkfont="s33",
-    # subfont="s38",
-    # movefont="s28",
-    # smallfont="s24",
-    # splainfont=plain_font.f15,
-    plainfont="p30",
-    descfont="p40",
-    choicefont="p60",
-    dialogfont="p90",
+    p=("Roboto", False),
+    header1="p24",
+    subtitle="p16",
+    paragraph="p12",
 )
 
 assets = resources.AssetStorage(
