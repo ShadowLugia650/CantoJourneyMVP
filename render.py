@@ -58,10 +58,11 @@ def load_assets(subdir):
                 version = len(listdir(path.join(RES_DIR, subdir, f)))
                 assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
             else:
-                for sf in listdir(path.join(RES_DIR, subdir, f)):
-                    if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
-                        type_, name, version = sf[:-4].split("_")
-                        assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, sf)))
+                # for sf in listdir(path.join(RES_DIR, subdir, f)):
+                #     if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
+                #         type_, name, version = sf[:-4].split("_")
+                #         assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, sf)))
+                load_assets(path.join(subdir, f))
         LOADING.inc_load_complete(1)
         LOADING.update_load_bar()
 
