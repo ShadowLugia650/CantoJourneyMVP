@@ -22,6 +22,7 @@ CUSTOMS_SPACING = (43 * render.downscale[0], 43 * render.downscale[1])#(43 * min
 EMPTY_46x46 = pygame.Surface((46 * min(render.downscale), 46 * min(render.downscale)), pygame.SRCALPHA)
 COLOUR_OFFS = (0, 0)
 COLOUR_SPACING = (15, 15)
+COMING_SOON = resources.render_text_with_icons("Coming\nsoon!", render.fs.paragraph, (0, 0, 0, 255), align="center")
 # TEMP
 customs_buttons = [
     resources.Button(
@@ -104,11 +105,11 @@ def update():
         # tabs
         btn.blit_on(render.canvas)
     if choosing_colour:
-        # TODO: blit colour choices
         for i, btn in enumerate(colour_buttons):
             render.canvas.blit(render.assets.img.PChara.Color.get(str(i + 5 * scroll_offs["colour"])), btn.pos)
+            if not any([a.endswith(str(idx)) for a in render.assets.img.PChara.get(cur_tab.title()).attrs()]):
+                btn.blit_on(render.canvas, with_centered=COMING_SOON)
     else:
-        # TODO: Blit the customisation options for the right 
         for i, btn in enumerate(customs_buttons):
             idx = i + 2 * scroll_offs[cur_tab]
             if any([a.startswith(str(idx)) for a in render.assets.img.PChara.get(cur_tab.title()).attrs()]):
