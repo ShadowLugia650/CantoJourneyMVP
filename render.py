@@ -37,6 +37,9 @@ assets = resources.AssetStorage(
     img=resources.AssetStorage(),
 )
 
+def min_scaled_surf(surf):
+    return pygame.transform.scale(surf, (int(round(surf.get_width() * min(downscale))), int(round(surf.get_height() * min(downscale)))))
+
 def load_assets(subdir):
     from screens import LOADING
     LOADING.inc_load_total(len(listdir(path.join(RES_DIR, subdir))))
@@ -49,19 +52,19 @@ def load_assets(subdir):
             if "_" in f:
                 # loads the file into assets
                 type_, name, version = f[:-4].split("_")
-                assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f)))
+                assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f))))
         if path.isdir(path.join(RES_DIR, subdir, f)):
             # FIX updating load total and complete for subdir
             if "_" in f:
                 # loads the latest version of the file into assets
                 type_, name = f.split("_")
                 version = len(listdir(path.join(RES_DIR, subdir, f)))
-                assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
+                assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png"))))
             else:
                 for sf in listdir(path.join(RES_DIR, subdir, f)):
                     if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
                         type_, name, version = sf[:-4].split("_")
-                        assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, sf)))
+                        assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f, sf))))
         LOADING.inc_load_complete(1)
         LOADING.update_load_bar()
 
@@ -100,7 +103,5 @@ def update():
     if screen in dir(screens) and hasattr(screens.__dict__[screen], "update"):
         screens.__dict__[screen].update()
     # blit_running_anims()
-    if __import__("player").sprite:
-        canvas.blit(__import__("player").sprite, (0, 0))
     pygame.display.update()
     fpsClock.tick(FPS)
