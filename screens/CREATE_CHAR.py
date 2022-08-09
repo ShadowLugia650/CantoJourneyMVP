@@ -16,6 +16,15 @@ scroll_offs = {
     "colour": 0,
 }
 
+crop_offs = {
+    "hair": (0, 0),
+    "body": (0, 0),
+    "face": (0, 0),
+    "shirt": (0, 0),
+    "pants": (0, 0),
+    "shoes": (0, 0),
+}
+
 EMPTY_92x92 = pygame.Surface((92 * min(render.downscale), 92 * min(render.downscale)), pygame.SRCALPHA)
 CUSTOMS_OFFS = (0, 0)
 CUSTOMS_SPACING = (43 * render.downscale[0], 43 * render.downscale[1])#(43 * min(render.downscale), 43 * min(render.downscale))
