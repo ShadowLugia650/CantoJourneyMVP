@@ -12,6 +12,7 @@ try:
     import android
 except ImportError:
     is_mobile = False
+load_prevscrn = None
 
 # OPTION GLOBALS
 
@@ -20,16 +21,17 @@ def _thd_loading_screen_while(function, args, reset=True, join_thd=None):
     if join_thd:
         join_thd.join()
     from screens import LOADING
-    prevscreen = render.screen
-    render.screen = "LOADING"
+    if load_prevscrn is None:
+        load_prevscrn = render.screen
+        render.screen = "LOADING"
     if reset:
         LOADING.reset()
     function(*args)
-    render.screen = prevscreen
-    # LOADING.reset()
+    render.screen = load_prevscrn
+    load_prevscrn = None
 
-def loading_screen_while(function, args, reset=True):
-    thd = threading.Thread(target=_thd_loading_screen_while, args=(function, args, reset), daemon=True)
+def loading_screen_while(function, args, reset=True, join_thd=None):
+    thd = threading.Thread(target=_thd_loading_screen_while, args=(function, args, reset, join_thd), daemon=True)
     thd.start()
     return thd
 

@@ -1,4 +1,5 @@
 from os import path, listdir
+# import time
 import threading
 import pygame
 import random
@@ -18,24 +19,19 @@ running_anims = {}
 animid = 0
 font_sizes = resources.AssetStorage(
     # s=("Assets/INSERTFONTFILE", True),
-    p=("Calibri", False),
-    # titlefont="s72",
-    # hdrfont="s60",
-    # pkfont="s33",
-    # subfont="s38",
-    # movefont="s28",
-    # smallfont="s24",
-    # splainfont=plain_font.f15,
-    plainfont="p30",
-    descfont="p40",
-    choicefont="p60",
-    dialogfont="p90",
+    p=("Roboto", False),
+    header1="p24",
+    subtitle="p16",
+    paragraph="p12",
 )
 
 assets = resources.AssetStorage(
     icons=resources.AssetStorage(),
     img=resources.AssetStorage(),
 )
+
+def min_scaled_surf(surf):
+    return pygame.transform.scale(surf, (int(round(surf.get_width() * min(downscale))), int(round(surf.get_height() * min(downscale)))))
 
 def load_assets(subdir):
     from screens import LOADING
@@ -49,26 +45,26 @@ def load_assets(subdir):
             if "_" in f:
                 # loads the file into assets
                 type_, name, version = f[:-4].split("_")
-                assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f)))
-        if path.isdir(path.join(RES_DIR, subdir, f)):
+                assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f))))
+        elif path.isdir(path.join(RES_DIR, subdir, f)):
             # FIX updating load total and complete for subdir
             if "_" in f:
                 # loads the latest version of the file into assets
                 type_, name = f.split("_")
                 version = len(listdir(path.join(RES_DIR, subdir, f)))
-                assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
+                assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png"))))
             else:
                 # for sf in listdir(path.join(RES_DIR, subdir, f)):
                 #     if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
                 #         type_, name, version = sf[:-4].split("_")
-                #         assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, sf)))
+                #         assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f, sf))))
                 load_assets(path.join(subdir, f))
         LOADING.inc_load_complete(1)
         LOADING.update_load_bar()
 
 # Load assets in thread form while showing the loading screen
-ui.loading_screen_while(load_assets, ("icons",))
-ui.loading_screen_while(load_assets, ("img",), reset=False)
+img_load_thd = ui.loading_screen_while(load_assets, ("img",), reset=False)
+# ui.loading_screen_while(load_assets, ("icons",), join_thd=img_load_thd)
 
 # def scaled_font_set(downscale_by=True):
 #     if downscale_by == True:
@@ -101,7 +97,5 @@ def update():
     if screen in dir(screens) and hasattr(screens.__dict__[screen], "update"):
         screens.__dict__[screen].update()
     # blit_running_anims()
-    if __import__("player").sprite:
-        canvas.blit(__import__("player").sprite, (0, 0))
     pygame.display.update()
     fpsClock.tick(FPS)
