@@ -23,8 +23,6 @@ EMPTY_46x46 = pygame.Surface((46 * min(render.downscale), 46 * min(render.downsc
 COLOUR_OFFS = (0, 0)
 COLOUR_SPACING = (15, 15)
 # TEMP
-EMPTY_92x92.fill((0, 0, 0, 255))
-EMPTY_46x46.fill((255, 255, 255, 255))
 customs_buttons = [
     resources.Button(
         (CUSTOMS_OFFS[0] + (CUSTOMS_SPACING[0] + EMPTY_92x92.get_width()) * (i % 2), CUSTOMS_OFFS[1] + (CUSTOMS_SPACING[1] + EMPTY_92x92.get_height()) * (i // 2)), 
@@ -34,6 +32,7 @@ customs_buttons = [
 colour_buttons = [
     resources.Button(
         (COLOUR_OFFS[0] + (COLOUR_SPACING[0] + EMPTY_46x46.get_width()) * (i % 2), COLOUR_OFFS[1] + (COLOUR_SPACING[1] + EMPTY_46x46.get_height()) * (i // 2)), 
+        # render.assets.img.PC
         EMPTY_46x46
     ) for i in range(20)
 ]
@@ -73,12 +72,11 @@ def drop(event):
         else:
             for i, btn in enumerate(colour_buttons):
                 if btn.collide_point(event.pos):
-                    idx = i + 2 * scroll_offs["colour"]
+                    idx = i + 5 * scroll_offs["colour"]
                     # endswith is after the 'c'
                     if any([a.endswith(str(idx)) for a in render.assets.img.PChara.get(cur_tab.title()).attrs()]):
                         # only if colour exists for current style
                         player.customs.insert(cur_tab + "_colour", idx)
-        print(player.customs)
         for tab, btn in tab_buttons:
             if btn.collide_point(event.pos):
                 if tab == "colour":
@@ -95,9 +93,10 @@ def drop(event):
             elif scroll_offs[cur_tab] < len(render.assets.img.PChara.get(cur_tab.title()).attrs()) / 2 - 2:
                 scroll_offs[cur_tab] += 1
         elif drag_dist[1] < -50:
-            if scroll_offs[cur_tab] > 1:
+            if choosing_colour:
+                pass
+            elif scroll_offs[cur_tab] > 1:
                 scroll_offs[cur_tab] -= 1
-        print(scroll_offs)
 
 def update():
     # blit tab backdrop box
@@ -106,10 +105,14 @@ def update():
         btn.blit_on(render.canvas)
     if choosing_colour:
         # TODO: blit colour choices
-        pass
+        for i, btn in enumerate(colour_buttons):
+            render.canvas.blit(render.assets.img.PChara.Color.get(str(i + 5 * scroll_offs["colour"])), btn.pos)
     else:
         # TODO: Blit the customisation options for the right 
-        pass
+        for i, btn in enumerate(customs_buttons):
+            idx = i + 2 * scroll_offs[cur_tab]
+            if any([a.startswith(str(idx)) for a in render.assets.img.PChara.get(cur_tab.title()).attrs()]):
+                render.canvas.blit(render.assets.img.PChara.get(cur_tab.title()).get(str(idx) + ("c0" if cur_tab != "body" else "")), btn.pos)
     # current player sprite
     render.canvas.blit(player.sprite, (render.canvas.get_width() * 0.25, render.canvas.get_height() * 0.5 - player.sprite.get_height() / 2))
     # player nameplate
