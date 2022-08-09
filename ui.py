@@ -64,6 +64,8 @@ def handle_event(event):
         if render.screen in screens.__dict__:
             if hasattr(screens.__dict__[render.screen], "hover"):
                 screens.__dict__[render.screen].hover(event)
+            elif hasattr(screens.__dict__[render.screen], "motion"):
+                screens.__dict__[render.screen].motion(event)
     elif event.type == pygame.MOUSEBUTTONDOWN:
         if render.screen in screens.__dict__:
             if event.button in [4, 5]:
@@ -81,7 +83,3 @@ def handle_event(event):
                     screens.__dict__[render.screen].drop(event)
                 elif hasattr(screens.__dict__[render.screen], "click"):
                     screens.__dict__[render.screen].click(event)
-    elif event.type == pygame.MOUSEMOTION:
-        if render.screen in screens.__dict__:
-            if hasattr(screens.__dict__[render.screen], "motion"):
-                screens.__dict__[render.screen].motion(event)
