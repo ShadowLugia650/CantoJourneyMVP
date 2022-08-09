@@ -128,12 +128,12 @@ class AssetStorage:
             if type(self.get(k)) == pygame.Surface:
                 self.__dict__[k] = pygame.transform.scale(self.get(k), size)
 
-    def attrs(self):
+    def attrs(self, key=None):
         """
         Returns a list of the attributes in this AssetStorage
         """
         # consider storing all attrs in a list when inserted
-        return [i for i in self.__dict__.keys() if not i.startswith('__') and not callable(self.__dict__[i])]
+        return list(filter(key, [i for i in self.__dict__.keys() if not i.startswith('__') and not callable(self.__dict__[i])]))
 
     def get(self, attr: str, default=None):
         """
