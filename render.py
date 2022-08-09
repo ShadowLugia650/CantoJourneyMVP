@@ -1,4 +1,5 @@
 from os import path, listdir
+# import time
 import threading
 import pygame
 import random
@@ -62,8 +63,9 @@ def load_assets(subdir):
         LOADING.update_load_bar()
 
 # Load assets in thread form while showing the loading screen
-ui.loading_screen_while(load_assets, ("icons",))
 ui.loading_screen_while(load_assets, ("img",), reset=False)
+# time.sleep(0.1)
+# ui.loading_screen_while(load_assets, ("icons",))
 
 # def scaled_font_set(downscale_by=True):
 #     if downscale_by == True:

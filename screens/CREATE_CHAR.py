@@ -1,4 +1,3 @@
-from calendar import c
 import pygame
 import render
 import player
@@ -41,7 +40,7 @@ customs_buttons = [
 ]
 colour_buttons = [
     resources.Button(
-        (COLOUR_OFFS[0] + (COLOUR_SPACING[0] + EMPTY_46x46.get_width()) * (i % 2), COLOUR_OFFS[1] + (COLOUR_SPACING[1] + EMPTY_46x46.get_height()) * (i // 2)), 
+        (COLOUR_OFFS[0] + (COLOUR_SPACING[0] + EMPTY_46x46.get_width()) * (i % 5), COLOUR_OFFS[1] + (COLOUR_SPACING[1] + EMPTY_46x46.get_height()) * (i // 5)), 
         # render.assets.img.PC
         EMPTY_46x46
     ) for i in range(20)
@@ -115,7 +114,8 @@ def update():
         btn.blit_on(render.canvas)
     if choosing_colour:
         for i, btn in enumerate(colour_buttons):
-            render.canvas.blit(render.assets.img.PChara.Color.get(str(i + 5 * scroll_offs["colour"])), btn.pos)
+            idx = i + 5 * scroll_offs["colour"]
+            render.canvas.blit(render.assets.img.PChara.Color.get(str(idx)), btn.pos)
             if not any([a.endswith(str(idx)) for a in render.assets.img.PChara.get(cur_tab.title()).attrs()]):
                 btn.blit_on(render.canvas, with_centered=COMING_SOON)
     else:
