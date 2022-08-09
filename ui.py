@@ -16,7 +16,9 @@ except ImportError:
 # OPTION GLOBALS
 
 
-def _thd_loading_screen_while(function, args, reset=True):
+def _thd_loading_screen_while(function, args, reset=True, join_thd=None):
+    if join_thd:
+        join_thd.join()
     from screens import LOADING
     prevscreen = render.screen
     render.screen = "LOADING"
