@@ -52,6 +52,7 @@ def load_scaled_surf(impath):
             if imtag.startswith(sf) and len(sf) > best_len:
                 best_len = len(sf)
                 best_scale = star_scale_factors[sf]
+    best_scale *= min(downscale)
     return pygame.transform.scale(im, (round(im.get_width() * best_scale), round(im.get_height() * best_scale)))
 
 def min_scaled_size(size, rounded=True):
@@ -108,7 +109,11 @@ def load_scale_factors():
     with open(path.join(RES_DIR, "scale_factor.txt"), "r") as f:
         text = f.read()
         for line in text.split("\n"):
-            asset, factor = line.split(":")
+            if line.strip().startswith("#") or line.strip().startswith("//") or ":" not in line:
+                continue # comments, also ignore lines w/o ':'
+            asset, factor = line.split(":", 1)
+            if "#" in factor or "//" in factor:
+                factor = factor.split("#")[0].split("//")[0].strip()
             factor = factor.split("/") if "/" in factor else float(factor)
             if type(factor) in [list, tuple]:
                 factor = float(factor[0]) / float(factor[1])
