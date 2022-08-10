@@ -1,0 +1,1 @@
+globals().update(os=__import__("os")) or globals().update(path="Assets/img/PChara") or [os.rename(os.path.join(path, f), os.path.join(path, "-x1_".join(f.rsplit("_", 1)))) for f in os.listdir(path) if f.endswith(".png") and not f.split("-")[-1].startswith("x")]
