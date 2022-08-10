@@ -8,7 +8,8 @@ load_lock = threading.Lock()
 load_complete = 0
 load_total = 0
 
-FOX = pygame.image.load(path.join(render.RES_DIR, "img", "img_Fox-xpt2_v1.png"))
+FOX = pygame.image.load(path.join(render.RES_DIR, "img", "img_Fox_v1.png"))
+# TODO: Fix scaling
 BAR_BG_COLOR = (255, 255, 255, 255)
 BAR_COLOR = (0, 0, 0, 255)
 BAR_SIZE = (render.canvas.get_width() * 0.6, render.canvas.get_height() * 0.05)
