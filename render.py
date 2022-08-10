@@ -33,16 +33,26 @@ assets = resources.AssetStorage(
 )
 
 scale_factors = {}
+star_scale_factors = {}
 
 def min_scaled_surf(surf):
     return pygame.transform.scale(surf, (int(round(surf.get_width() * min(downscale))), int(round(surf.get_height() * min(downscale)))))
 
-def load_scaled_surf(path):
-    im = pygame.image.load(path)
-    imtag = path.split(path.sep)[-1].rsplit("_", 1)[0].replace("-x1", "")
+def load_scaled_surf(impath):
+    im = pygame.image.load(impath)
+    imtag = impath.split(path.sep)[-1].rsplit("_", 1)[0].replace("-x1", "")
+    best_scale = 1
+    if "xpt" in impath:
+        return im
     if imtag in scale_factors:
-        return pygame.transform.scale(im, (round(im.get_width() * scale_factors[imtag]), round(im.get_height() * scale_factors[imtag])))
-    return im
+        best_scale = scale_factors[imtag]
+    else:
+        best_len = 0
+        for sf in star_scale_factors:
+            if imtag.startswith(sf) and len(sf) > best_len:
+                best_len = len(sf)
+                best_scale = star_scale_factors[sf]
+    return pygame.transform.scale(im, (round(im.get_width() * best_scale), round(im.get_height() * best_scale)))
 
 def min_scaled_size(size, rounded=True):
     if rounded:
@@ -54,7 +64,7 @@ def downscaled_size(size, rounded=True):
         return [round(size[0] * downscale[0]), round(size[1] * downscale[1])]
     return [size[0] * downscale[0], size[1] * downscale[1]]
 
-def load_assets(subdir):
+def load_assets(subdir, rescale=False):
     from screens import LOADING
     LOADING.inc_load_total(len(listdir(path.join(RES_DIR, subdir))))
     recursive_thds = []
@@ -67,7 +77,7 @@ def load_assets(subdir):
             if "_" in f:
                 # loads the file into assets
                 type_, name, version = f[:-4].split("_")
-                if subdir == "img":
+                if rescale:
                     assets.insert(type_+"."+name.replace("-", "."), load_scaled_surf(path.join(RES_DIR, subdir, f)))
                 else:
                     assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f)))
@@ -77,13 +87,16 @@ def load_assets(subdir):
                 # loads the latest version of the file into assets
                 type_, name = f.split("_")
                 version = len(listdir(path.join(RES_DIR, subdir, f)))
-                assets.insert(type_+"."+name.replace("-", "."), load_scaled_surf(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
+                if rescale:
+                    assets.insert(type_+"."+name.replace("-", "."), load_scaled_surf(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
+                else:
+                    assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
             else:
                 # for sf in listdir(path.join(RES_DIR, subdir, f)):
                 #     if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
                 #         type_, name, version = sf[:-4].split("_")
                 #         assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f, sf))))
-                thd = threading.Thread(target=load_assets, args=(path.join(subdir, f),), daemon=True)
+                thd = threading.Thread(target=load_assets, args=(path.join(subdir, f), rescale), daemon=True)
                 thd.start()
                 recursive_thds.append(thd)
         LOADING.inc_load_complete(1)
@@ -93,16 +106,20 @@ def load_assets(subdir):
 
 def load_scale_factors():
     with open(path.join(RES_DIR, "scale_factor.txt"), "r") as f:
-        for line in f.split("\n"):
+        text = f.read()
+        for line in text.split("\n"):
             asset, factor = line.split(":")
             factor = factor.split("/") if "/" in factor else float(factor)
             if type(factor) in [list, tuple]:
                 factor = float(factor[0]) / float(factor[1])
-            scale_factors[asset.strip()] = factor * min(downscale)
+            if asset.strip().endswith("*"):
+                star_scale_factors[asset.strip()[:-1]] = factor * min(downscale)
+            else:
+                scale_factors[asset.strip()] = factor * min(downscale)
 
 scale_load_thd = ui.loading_screen_while(load_scale_factors, ())
 # Load assets in thread form while showing the loading screen
-img_load_thd = ui.loading_screen_while(load_assets, ("img",), False, scale_load_thd)
+img_load_thd = ui.loading_screen_while(load_assets, ("img", True), reset=False, join_thd=scale_load_thd)
 btn_load_thd = ui.loading_screen_while(load_assets, ("btn",), reset=False)#, join_thd=img_load_thd)
 icon_load_thd = ui.loading_screen_while(load_assets, ("icon",), reset=False)#, join_thd=btn_load_thd)
 

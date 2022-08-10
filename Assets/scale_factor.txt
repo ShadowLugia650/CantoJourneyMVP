@@ -1,2 +1,4 @@
 img_Fox: 0.2
 img_Loading-Clouds: 0.07
+img_PChara-Body-*: 222/1080
+img_PChara-Face-*: 222/1080
