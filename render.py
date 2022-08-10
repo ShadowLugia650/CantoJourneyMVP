@@ -12,7 +12,8 @@ fpsClock = pygame.time.Clock()
 screen = "START"
 RES_DIR = "Assets"
 # TODO: scale up to PC later
-canvas = pygame.display.set_mode((736, 621), pygame.FULLSCREEN if ui.is_mobile else 0)
+# can test stretch with height 621 (1.5x)
+canvas = pygame.display.set_mode((736, 414), pygame.FULLSCREEN if ui.is_mobile else 0)
 BGCOLOR = (27, 33, 44, 255)
 downscale = (canvas.get_width() / 736, canvas.get_height() / 414)
 running_anims = {}
@@ -20,9 +21,9 @@ animid = 0
 font_sizes = resources.AssetStorage(
     # s=("Assets/INSERTFONTFILE", True),
     p=("Roboto", False),
-    header1="p24",
-    subtitle="p16",
-    paragraph="p12",
+    header1="p30",
+    subtitle="p22",
+    paragraph="p18",
 )
 
 assets = resources.AssetStorage(
