@@ -13,11 +13,13 @@ try:
 except ImportError:
     is_mobile = False
 load_prevscrn = None
+loading_thds = 0
 
 # OPTION GLOBALS
 
 
 def _thd_loading_screen_while(function, args, reset=True, join_thd=None):
+    global load_prevscrn, loading_thds
     if join_thd:
         join_thd.join()
     from screens import LOADING
@@ -27,12 +29,16 @@ def _thd_loading_screen_while(function, args, reset=True, join_thd=None):
     if reset:
         LOADING.reset()
     function(*args)
-    render.screen = load_prevscrn
-    load_prevscrn = None
+    loading_thds -= 1
+    if loading_thds == 0:
+        render.screen = load_prevscrn
+        load_prevscrn = None
 
 def loading_screen_while(function, args, reset=True, join_thd=None):
+    global loading_thds
     thd = threading.Thread(target=_thd_loading_screen_while, args=(function, args, reset, join_thd), daemon=True)
     thd.start()
+    loading_thds += 1
     return thd
 
 def default_log(msg):
