@@ -12,7 +12,7 @@ fpsClock = pygame.time.Clock()
 screen = "START"
 RES_DIR = "Assets"
 # TODO: scale up to PC later
-canvas = pygame.display.set_mode((736, 414), pygame.FULLSCREEN if ui.is_mobile else 0)
+canvas = pygame.display.set_mode((736, 621), pygame.FULLSCREEN if ui.is_mobile else 0)
 BGCOLOR = (27, 33, 44, 255)
 downscale = (canvas.get_width() / 736, canvas.get_height() / 414)
 running_anims = {}
@@ -33,9 +33,20 @@ assets = resources.AssetStorage(
 def min_scaled_surf(surf):
     return pygame.transform.scale(surf, (int(round(surf.get_width() * min(downscale))), int(round(surf.get_height() * min(downscale)))))
 
+def min_scaled_size(size, rounded=True):
+    if rounded:
+        return [round(size[0] * min(downscale)), round(size[1] * min(downscale))]
+    return [size[0] * min(downscale), size[1] * min(downscale)]
+
+def downscaled_size(size, rounded=True):
+    if rounded:
+        return [round(size[0] * downscale[0]), round(size[1] * downscale[1])]
+    return [size[0] * downscale[0], size[1] * downscale[1]]
+
 def load_assets(subdir):
     from screens import LOADING
     LOADING.inc_load_total(len(listdir(path.join(RES_DIR, subdir))))
+    recursive_thds = []
     for f in listdir(path.join(RES_DIR, subdir)):
         # TODO: make it so we can also load SVG, in addition to PNG
         # Hint: consider checking the following
@@ -58,13 +69,17 @@ def load_assets(subdir):
                 #     if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
                 #         type_, name, version = sf[:-4].split("_")
                 #         assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f, sf))))
-                load_assets(path.join(subdir, f))
+                thd = threading.Thread(target=load_assets, args=(path.join(subdir, f),), daemon=True)
+                thd.start()
+                recursive_thds.append(thd)
         LOADING.inc_load_complete(1)
         LOADING.update_load_bar()
+    for thd in recursive_thds:
+        thd.join()
 
 # Load assets in thread form while showing the loading screen
-img_load_thd = ui.loading_screen_while(load_assets, ("img",), reset=False)
-# ui.loading_screen_while(load_assets, ("icons",), join_thd=img_load_thd)
+img_load_thd = ui.loading_screen_while(load_assets, ("img",))
+ui.loading_screen_while(load_assets, ("icons",), reset=False, join_thd=img_load_thd)
 
 # def scaled_font_set(downscale_by=True):
 #     if downscale_by == True:
