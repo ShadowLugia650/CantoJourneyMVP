@@ -28,10 +28,10 @@ crop_offs = {
 }
 
 EMPTY_92x92 = pygame.Surface((92 * min(render.downscale), 92 * min(render.downscale)), pygame.SRCALPHA)
-CUSTOMS_OFFS = render.downscaled_size((344, 126))
+CUSTOMS_OFFS = render.downscaled_size((344, 114))
 CUSTOMS_SPACING = render.min_scaled_size((43, 43)) # (43 * render.downscale[0], 43 * render.downscale[1])#(43 * min(render.downscale), 43 * min(render.downscale))
 EMPTY_46x46 = pygame.Surface((46 * min(render.downscale), 46 * min(render.downscale)), pygame.SRCALPHA)
-COLOUR_OFFS = render.downscaled_size((323, 116))
+COLOUR_OFFS = render.downscaled_size((313, 112))
 COLOUR_SPACING = render.min_scaled_size((15, 15)) # (15, 15)
 COMING_SOON = resources.render_text_with_icons("Coming\nsoon!", render.fs.paragraph, (0, 0, 0, 255), align="center")
 # TEMP
@@ -157,6 +157,8 @@ def drop(event):
                         scroll_offs["colour"] = 0
                 else:
                     cur_tab = tab
+                    if cur_tab == "skin":
+                        choosing_colour = False
     else: # is swipe
         if drag_dist[1] > 50:
             if choosing_colour:

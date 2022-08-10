@@ -21,9 +21,9 @@ animid = 0
 font_sizes = resources.AssetStorage(
     # s=("Assets/INSERTFONTFILE", True),
     p=("Roboto", False),
-    header1="p24",
-    subtitle="p16",
-    paragraph="p12",
+    header1="p30",
+    subtitle="p22",
+    paragraph="p18",
 )
 
 assets = resources.AssetStorage(
