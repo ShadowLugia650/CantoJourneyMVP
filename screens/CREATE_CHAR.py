@@ -48,12 +48,38 @@ colour_buttons = [
         EMPTY_46x46
     ) for i in range(20)
 ]
+EMPTY_29x56 = pygame.Surface(render.min_scaled_size((29, 56)), pygame.SRCALPHA)
+EMPTY_56x29 = pygame.Surface(render.min_scaled_size((56, 29)), pygame.SRCALPHA)
+TAB_DATA = resources.AssetStorage(
+    BACK=EMPTY_56x29.copy(),
+    SEL_BACK=EMPTY_56x29.copy(),
+    SIDE_BACK=EMPTY_29x56.copy(),
+    SEL_SIDE_BACK=EMPTY_29x56.copy(),
+    TAB_COLOUR = (159, 159, 159, 255),
+    TAB_SEL_COLOUR = (217, 217, 217, 255),   
+    BG_COLOUR = (217, 217, 217, 255),   
+    TAB_TEXT_COLOUR = (0, 0, 0, 255)
+)
+pygame.draw.rect(TAB_DATA.BACK, TAB_DATA.TAB_COLOUR, pygame.Rect((0, 0), EMPTY_56x29.get_size()), border_top_left_radius=2, border_top_right_radius=2)
+pygame.draw.rect(TAB_DATA.SEL_BACK, TAB_DATA.TAB_SEL_COLOUR, pygame.Rect((0, 0), EMPTY_56x29.get_size()), border_top_left_radius=2, border_top_right_radius=2)
+pygame.draw.rect(TAB_DATA.SIDE_BACK, TAB_DATA.TAB_COLOUR, pygame.Rect((0, 0), EMPTY_29x56.get_size()), border_top_right_radius=2, border_bottom_right_radius=2)
+pygame.draw.rect(TAB_DATA.SEL_SIDE_BACK, TAB_DATA.TAB_SEL_COLOUR, pygame.Rect((0, 0), EMPTY_29x56.get_size()), border_top_right_radius=2, border_bottom_right_radius=2)
 tab_buttons = {
     # k: resources.Button() for i, k in enumerate(player.customs.attrs(key=lambda a: "colour" not in a))
-    # k.lower(): resources.Button() for i, k in enumerate(PARTS)
+    k.lower(): resources.Button(
+        (
+            289 * render.downscale[0] + i * EMPTY_56x29.get_width(), 
+            72 * render.downscale[1]
+        ),
+        EMPTY_56x29
+    ) for i, k in enumerate(["skin"] + PARTS)
 }
-# tab_buttons["skin"] = resources.Button()
-# tab_buttons["colour"] = resources.Button()
+# tab_buttons["skin"] = resources.Button(render.downscaled_size((289, 72)), EMPTY_56x29)
+tab_buttons["colour"] = resources.Button(render.downscaled_size((627, 101)), EMPTY_29x56)
+TAB_TEXT = {
+    tab: resources.render_text_with_icons(tab.title(), render.fs.paragraph, TAB_DATA.TAB_TEXT_COLOUR) for tab in tab_buttons
+}
+TAB_TEXT["colour"] = pygame.transform.rotate(TAB_TEXT["colour"], 270)
 cur_tab = "skin"
 choosing_colour = False
 
@@ -82,6 +108,7 @@ def init_cropped_styles():
         LOADING.inc_load_complete()
         LOADING.update_load_bar()
     # print("cropped complete")
+    player.generate_sprite()
 
 ui.loading_screen_while(init_cropped_styles, (), False, render.img_load_thd)
 
@@ -121,7 +148,7 @@ def drop(event):
                         # only if colour exists for current style
                         player.customs.insert(cur_tab + "_colour", idx)
                         player.generate_sprite()
-        for tab, btn in tab_buttons:
+        for tab, btn in tab_buttons.items():
             if btn.collide_point(event.pos):
                 if tab == "colour":
                     if cur_tab != "skin":
@@ -144,9 +171,14 @@ def drop(event):
 
 def update():
     # blit tab backdrop box
-    for btn in tab_buttons:
+    pygame.draw.rect(render.canvas, TAB_DATA.BG_COLOUR, pygame.Rect(render.downscaled_size((289, 101)), render.min_scaled_size((338, 254))), border_bottom_left_radius=2, border_bottom_right_radius=2)
+    for tab, btn in tab_buttons.items():
         # tabs
-        btn.blit_on(render.canvas)
+        if tab != "colour":
+            render.canvas.blit(TAB_DATA.SEL_BACK if cur_tab == tab else TAB_DATA.BACK, btn.pos)
+        else:
+            render.canvas.blit(TAB_DATA.SEL_SIDE_BACK if choosing_colour else TAB_DATA.SIDE_BACK, btn.pos)
+        btn.blit_on(render.canvas, with_centered=TAB_TEXT[tab])
     if choosing_colour:
         for i, btn in enumerate(colour_buttons):
             idx = i + 5 * scroll_offs["colour"]

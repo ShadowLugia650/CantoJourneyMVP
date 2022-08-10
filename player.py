@@ -1,7 +1,7 @@
 import pygame
 import render
 import resources
-
+import ui
 
 def save():
     pass
@@ -53,3 +53,5 @@ def generate_sprite():
     head_sprite.insert("medium", pygame.transform.scale(head_sprite.large, (round(head_sprite.large.get_width() * head_sprite.MEDIUM_SCALE), round(head_sprite.large.get_height() * head_sprite.MEDIUM_SCALE))))
     # TODO: Add small
     head_sprite.insert("small", pygame.transform.scale(head_sprite.large, (round(head_sprite.large.get_width() * head_sprite.SMALL_SCALE), round(head_sprite.large.get_height() * head_sprite.SMALL_SCALE))))
+
+# ui.loading_screen_while(generate_sprite, (), False, render.img_load_thd)
