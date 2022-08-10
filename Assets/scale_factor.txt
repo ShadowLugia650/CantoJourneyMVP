@@ -1,0 +1,2 @@
+img_Fox: 0.2
+img_Loading-Clouds: 0.07

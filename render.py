@@ -27,12 +27,22 @@ font_sizes = resources.AssetStorage(
 )
 
 assets = resources.AssetStorage(
-    icons=resources.AssetStorage(),
+    icon=resources.AssetStorage(),
     img=resources.AssetStorage(),
+    btn=resources.AssetStorage(),
 )
+
+scale_factors = {}
 
 def min_scaled_surf(surf):
     return pygame.transform.scale(surf, (int(round(surf.get_width() * min(downscale))), int(round(surf.get_height() * min(downscale)))))
+
+def load_scaled_surf(path):
+    im = pygame.image.load(path)
+    imtag = path.split(path.sep)[-1].rsplit("_", 1)[0].replace("-x1", "")
+    if imtag in scale_factors:
+        return pygame.transform.scale(im, (round(im.get_width() * scale_factors[imtag]), round(im.get_height() * scale_factors[imtag])))
+    return im
 
 def min_scaled_size(size, rounded=True):
     if rounded:
@@ -57,14 +67,17 @@ def load_assets(subdir):
             if "_" in f:
                 # loads the file into assets
                 type_, name, version = f[:-4].split("_")
-                assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f))))
+                if subdir == "img":
+                    assets.insert(type_+"."+name.replace("-", "."), load_scaled_surf(path.join(RES_DIR, subdir, f)))
+                else:
+                    assets.insert(type_+"."+name.replace("-", "."), pygame.image.load(path.join(RES_DIR, subdir, f)))
         elif path.isdir(path.join(RES_DIR, subdir, f)):
             # FIX updating load total and complete for subdir
             if "_" in f:
                 # loads the latest version of the file into assets
                 type_, name = f.split("_")
                 version = len(listdir(path.join(RES_DIR, subdir, f)))
-                assets.insert(type_+"."+name.replace("-", "."), min_scaled_surf(pygame.image.load(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png"))))
+                assets.insert(type_+"."+name.replace("-", "."), load_scaled_surf(path.join(RES_DIR, subdir, f, f + "_v" + str(version) + ".png")))
             else:
                 # for sf in listdir(path.join(RES_DIR, subdir, f)):
                 #     if path.isfile(path.join(RES_DIR, subdir, f, sf)) and (sf.lower().endswith(".png") or sf.lower().enswith(".svg")):
@@ -78,9 +91,21 @@ def load_assets(subdir):
     for thd in recursive_thds:
         thd.join()
 
+def load_scale_factors():
+    with open(path.join(RES_DIR, "scale_factor.txt"), "r") as f:
+        for line in f.split("\n"):
+            asset, factor = line.split(":")
+            factor = factor.split("/") if "/" in factor else float(factor)
+            if type(factor) in [list, tuple]:
+                factor = float(factor[0]) / float(factor[1])
+            scale_factors[asset.strip()] = factor * min(downscale)
+
+scale_load_thd = ui.loading_screen_while(load_scale_factors, ())
 # Load assets in thread form while showing the loading screen
-img_load_thd = ui.loading_screen_while(load_assets, ("img",))
-ui.loading_screen_while(load_assets, ("icons",), reset=False, join_thd=img_load_thd)
+img_load_thd = ui.loading_screen_while(load_assets, ("img",), False, scale_load_thd)
+btn_load_thd = ui.loading_screen_while(load_assets, ("btn",), reset=False)#, join_thd=img_load_thd)
+icon_load_thd = ui.loading_screen_while(load_assets, ("icon",), reset=False)#, join_thd=btn_load_thd)
+
 
 # def scaled_font_set(downscale_by=True):
 #     if downscale_by == True:
