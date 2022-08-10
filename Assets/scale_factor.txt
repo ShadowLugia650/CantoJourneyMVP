@@ -3,6 +3,9 @@ img_Fox: 88/409 # This is the scaling of the Fox
 img_Loading-Clouds: 49/239
 // You can also do Java-style comments, but no block comments yet...
 img_Loading-Plane: 184/669 // These also work inline
+img_Airplane-Background: 831/1920
+img_Airplane-Ticket: 1
+# TODO: Fix airplane ticket scaling
 img_PChara-*: 222/1080
 # We can use single division operations (x/y) as well as decimals (0.4)
 # other operations like multiplication and more than one division operation (x/y/z) aren't implemented
