@@ -89,22 +89,22 @@ def init_cropped_styles():
         styles = render.assets.img.PChara.get(part).attrs(key=lambda a: a.endswith("0"))
         LOADING.inc_load_total(len(styles))
         for style in styles:
-            if render.assets.img.PChara.get(part).get(style).get("xpt2"):
+            if render.assets.img.PChara.get(part).get(style):
                 crop = pygame.Surface(EMPTY_92x92.get_size(), pygame.SRCALPHA)
-                crop.blit(render.assets.img.PChara.get(part).get(style).xpt2, crop_offs[part.lower()])
-                render.assets.img.PChara.get(part).get(style).insert("cropped", crop)
+                crop.blit(render.assets.img.PChara.get(part).get(style), crop_offs[part.lower()])
+                render.assets.img.PChara.get(part).insert(style + "_cropped", crop)
             LOADING.inc_load_complete()
             LOADING.update_load_bar()
     hairscale = 92/152
     styles = render.assets.img.PChara.Hair.attrs(key=lambda a: a.endswith("0"))
     LOADING.inc_load_total(len(styles))
     for hstyle in styles:
-        if render.assets.img.PChara.Hair.get(hstyle).get("xpt2"):
+        if render.assets.img.PChara.Hair.get(hstyle):
             crop = pygame.Surface(EMPTY_92x92.get_size(), pygame.SRCALPHA)
-            hair = render.assets.img.PChara.Hair.get(hstyle).xpt2
+            hair = render.assets.img.PChara.Hair.get(hstyle)
             smhair = pygame.transform.scale(hair, (round(hair.get_width() * hairscale), round(hair.get_height() * hairscale)))
             crop.blit(smhair, crop_offs["hair"])
-            render.assets.img.PChara.Hair.get(hstyle).insert("cropped", crop)
+            render.assets.img.PChara.Hair.insert(hstyle + "_cropped", crop)
         LOADING.inc_load_complete()
         LOADING.update_load_bar()
     # print("cropped complete")
@@ -194,7 +194,7 @@ def update():
                 if cur_tab == "skin": 
                     render.canvas.blit(render.assets.img.PChara.Skin.get(str(idx)), btn.pos)
                 else:
-                    render.canvas.blit(render.assets.img.PChara.get(cur_tab.title()).get(str(idx) + "c0").cropped, btn.pos)
+                    render.canvas.blit(render.assets.img.PChara.get(cur_tab.title()).get(str(idx) + "c0_cropped"), btn.pos)
     # current player sprite
     render.canvas.blit(player.sprite, (render.canvas.get_width() * 0.1, render.canvas.get_height() * 0.5 - player.sprite.get_height() / 2))
     # player nameplate
