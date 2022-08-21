@@ -148,6 +148,8 @@ class AssetStorage:
             the value associated with the given key or the default value if the
             given key is not found
         """
+        if type(attr) != str:
+            attr = str(attr)
         if "." in attr:
             stor = self
             for substor in attr.split('.'):
@@ -193,7 +195,9 @@ class AssetStorage:
                     continue
                 stor = self
                 for i in range(k.count("  ")):
-                    stor = stor.__dict__.get(opath[i])
+                    if stor.get(opath[i]) is None:
+                        stor.insert(opath[i], AssetStorage())
+                    stor = stor.get(opath[i])
                 previndent = k.count("  ")
                 k = k.strip()
                 try:
@@ -207,6 +211,8 @@ class AssetStorage:
                         else:
                             if v.title() in ["True", "False"]:
                                 v = v.title() == "True"
+                            elif v.title() == "None":
+                                v = None
                 stor.register(**{k: v})
 
 

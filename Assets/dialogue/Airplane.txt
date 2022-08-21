@@ -1,0 +1,6 @@
+flight_attendant_chat=
+  bubble=img.Airplane.Ticket
+  profile=img.OChara.FlightAttendantBarbara
+  speaker=Flight Attendant Barbara
+  text=Welcome aboard! May I see your ticket, please?
+  goto=None
