@@ -9,6 +9,7 @@ load_complete = 0
 load_total = 0
 load_complete_old = 0
 load_complete_new = 0
+which_bar = 0
 
 FOX = pygame.image.load(path.join(render.RES_DIR, "img", "img_Fox-xpt2_v1.png"))
 BAR_BG_COLOR = (255, 255, 255, 255)
@@ -61,9 +62,16 @@ def update_load_bar():
 
     load_complete_old = (load_complete/load_total)
 
-# TASK 2
+    # TASK 2
+    if which_bar == 1:
+        render.canvas.fill((187, 226, 255, 255))
 
 def update():
     render.canvas.blit(BAR_BG, (render.canvas.get_width() / 2 - BAR_BG.get_width() / 2, render.canvas.get_height() / 2 - BAR_BG.get_height() / 2))
     render.canvas.blit(loading_bar, (render.canvas.get_width() / 2 - BAR_BG.get_width() / 2, render.canvas.get_height() / 2 - BAR_BG.get_height() / 2))
     render.canvas.blit(FOX, (render.canvas.get_width() / 2 - BAR_BG.get_width() / 2 + loading_bar.get_width() - FOX.get_width() / 2, render.canvas.get_height() / 2 - FOX.get_height() / 2))
+
+    if which_bar == 1:
+        render.canvas.fill((187, 226, 255, 255))
+        
+    #else:
