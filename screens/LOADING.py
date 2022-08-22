@@ -76,5 +76,5 @@ def update():
 
     if which_bar == 1:
         render.canvas.fill((187, 226, 255, 255))
-        
+        render.canvas.blit(render.assets.img.Loading.Track, (render.canvas.get_width() / 2, render.canvas.get_height() / 2))
     #else:
