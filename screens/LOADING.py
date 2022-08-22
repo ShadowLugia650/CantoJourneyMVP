@@ -7,6 +7,8 @@ import threading
 load_lock = threading.Lock()
 load_complete = 0
 load_total = 0
+load_complete_old = 0
+load_complete_new = 0
 
 FOX = pygame.image.load(path.join(render.RES_DIR, "img", "img_Fox-xpt2_v1.png"))
 BAR_BG_COLOR = (255, 255, 255, 255)
@@ -37,21 +39,27 @@ def inc_load_total(inc=1):
     load_lock.release()
 
 def update_load_bar():
+    global loading_bar, load_complete_old, load_complete_new
     # TASK 1
-    # TODO: make it so that the loading bar only updates if the percentage 
+    # TODO: make it so that the loading bar only updates if the percentage
     # increased
     # Hint: consider saving the current percentage in a variable so that when
     # this function is called, we can check the percentage against the old 
     # stored one
     # Aaron's notes:
     # float x = current percentage (load_complete / load_total), float y = old percentage (what x was before). y = 0. if x >= y, y = x. if x > 100, break (kinda unneeded).
-    float
 
-    global loading_bar
-    load_lock.acquire()
-    loading_bar = pygame.Surface((int(round(BAR_SIZE[0] * load_complete / (load_total if load_total > 0 else 1))), BAR_SIZE[1]), pygame.SRCALPHA)
-    loading_bar.fill(BAR_COLOR)
-    load_lock.release()
+    load_complete_new = (load_complete / load_total)
+
+    if load_complete_old < load_complete_new:
+        load_lock.acquire()
+        loading_bar = pygame.Surface(
+            (int(round(BAR_SIZE[0] * load_complete / (load_total if load_total > 0 else 1))), BAR_SIZE[1]),
+            pygame.SRCALPHA)
+        loading_bar.fill(BAR_COLOR)
+        load_lock.release()
+
+    load_complete_old = (load_complete/load_total)
 
 # TASK 2
 
