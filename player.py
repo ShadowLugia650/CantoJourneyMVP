@@ -9,6 +9,9 @@ def save():
 def load():
     pass
 
+
+name = "Kai"
+
 customs = resources.AssetStorage(
     skin=0,
     hair=0,

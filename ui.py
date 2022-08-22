@@ -93,3 +93,7 @@ def handle_event(event):
                     screens.__dict__[render.screen].drop(event)
                 elif hasattr(screens.__dict__[render.screen], "click"):
                     screens.__dict__[render.screen].click(event)
+    elif event.type == pygame.TEXTINPUT:
+        if render.screen in screens.__dict__:
+            if hasattr(screens.__dict__[render.screen], "text_input"):
+                screens.__dict__[render.screen].text_input(event)

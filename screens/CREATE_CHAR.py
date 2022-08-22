@@ -4,6 +4,10 @@ import ui
 import player
 import resources
 
+name_cap = 12
+name_color = (0,0,0)
+nametext = render.fs.paragraph.render(player.name,True,name_color)
+
 drag_dist = [0, 0]
 dragging = False
 PARTS = ["Hair", "Face", "Shirt", "Pants", "Shoes"]
@@ -34,6 +38,14 @@ EMPTY_46x46 = pygame.Surface((46 * min(render.downscale), 46 * min(render.downsc
 COLOUR_OFFS = render.downscaled_size((313, 112))
 COLOUR_SPACING = render.min_scaled_size((15, 15)) # (15, 15)
 COMING_SOON = resources.render_text_with_icons("Coming\nsoon!", render.fs.paragraph, (0, 0, 0, 255), align="center")
+
+
+TEXTBOX_OFFS = render.downscaled_size((109,317))
+NAME_OFFS = render.downscaled_size((116,327))
+TEXT_BOX = pygame.Surface((159 * min(render.downscale), 38 * min(render.downscale)))
+TEXT_BOX.fill((255,255,255))
+
+
 # TEMP
 customs_buttons = [
     resources.Button(
@@ -48,6 +60,10 @@ colour_buttons = [
         EMPTY_46x46
     ) for i in range(20)
 ]
+
+#name text box
+name_button = resources.Button(TEXTBOX_OFFS,TEXT_BOX)
+
 EMPTY_29x56 = pygame.Surface(render.min_scaled_size((29, 56)), pygame.SRCALPHA)
 EMPTY_56x29 = pygame.Surface(render.min_scaled_size((56, 29)), pygame.SRCALPHA)
 TAB_DATA = resources.AssetStorage(
@@ -123,10 +139,30 @@ def motion(event):
         drag_dist[0] += event.rel[0]
         drag_dist[1] += event.rel[1]
 
+
+def text_input(event):
+    global nametext
+    if len(player.name) < name_cap:
+        player.name += event.text
+        nametext = render.fs.paragraph.render(player.name,True,name_color)
+
+def key(event):
+    global nametext
+    if event.key ==pygame.K_BACKSPACE:
+        player.name = player.name[0:-1:1]
+        nametext = render.fs.paragraph.render(player.name,True,name_color)
+        
+    elif event.key ==pygame.K_RETURN:
+        pygame.key.stop_text_input()
+
 def drop(event):
     global dragging, scroll_offs, cur_tab, choosing_colour
     dragging = False
     if abs(drag_dist[0]) < 50 and abs(drag_dist[1]) < 50: # is tap
+        if name_button.collide_point(event.pos):
+            pygame.key.start_text_input()
+        else:
+            pygame.key.stop_text_input()
         if not choosing_colour:
             for i, btn in enumerate(customs_buttons):
                 if btn.collide_point(event.pos):
@@ -198,3 +234,5 @@ def update():
     # current player sprite
     render.canvas.blit(player.sprite, (render.canvas.get_width() * 0.1, render.canvas.get_height() * 0.5 - player.sprite.get_height() / 2))
     # player nameplate
+    name_button.blit_on(render.canvas)
+    render.canvas.blit(nametext, NAME_OFFS)
