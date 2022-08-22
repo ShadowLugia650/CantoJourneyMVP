@@ -11,7 +11,10 @@ load_complete_old = 0
 load_complete_new = 0
 which_bar = 0
 
-FOX = pygame.image.load(path.join(render.RES_DIR, "img", "img_Fox-xpt2_v1.png"))
+FOX_SCALE = 88/409 * min(render.downscale)
+FOX = pygame.image.load(path.join(render.RES_DIR, "img", "img_Fox_v1.png"))
+FOX = pygame.transform.scale(FOX, (round(FOX.get_width() * FOX_SCALE), round(FOX.get_height() * FOX_SCALE)))
+# TODO: Fix scaling
 BAR_BG_COLOR = (255, 255, 255, 255)
 BAR_COLOR = (0, 0, 0, 255)
 BAR_SIZE = (render.canvas.get_width() * 0.6, render.canvas.get_height() * 0.05)
