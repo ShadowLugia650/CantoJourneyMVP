@@ -97,3 +97,25 @@ def handle_event(event):
         if render.screen in screens.__dict__:
             if hasattr(screens.__dict__[render.screen], "text_input"):
                 screens.__dict__[render.screen].text_input(event)
+
+def initialize_settings_button():
+    global settings_button
+    SETTINGS_OFFS = render.downscaled_size((695,16))
+    SETTINGS_IMG = render.assets.icon.Settings
+    settings_button = resources.Button(SETTINGS_OFFS, SETTINGS_IMG)
+
+def check_settings_collision(pos):
+        if settings_button.collide_point(pos):
+            #SETTINGS EVENT GOES HERE
+            print("settings event goes here")
+
+def initialize_backarrow():
+    global backarrow
+    BACK_OFFS = render.downscaled_size((24,17))
+    BACK_IMG = render.assets.icon.Back
+    backarrow = resources.Button(BACK_OFFS, BACK_IMG)
+
+def check_backarrow_collision(pos):
+        if backarrow.collide_point(pos):
+            #BACKARROW EVENT GOES HERE
+            print("backarrow event goes here")

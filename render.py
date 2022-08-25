@@ -74,7 +74,7 @@ def load_assets(subdir, rescale=False):
         # Hint: consider checking the following
         # 1. Is the item a file?
         # 2. If so, is the extension PNG or SVG?
-        if f.endswith(".png"):
+        if f.endswith(".png") or f.endswith(".svg"):
             if "_" in f:
                 # loads the file into assets
                 type_, name, version = f[:-4].split("_")
@@ -162,3 +162,8 @@ def update():
     # blit_running_anims()
     pygame.display.update()
     fpsClock.tick(FPS)
+
+#render settings button
+ui.loading_screen_while(ui.initialize_settings_button,(), False, icon_load_thd)
+#render backarrow
+ui.loading_screen_while(ui.initialize_backarrow,(), False, icon_load_thd)

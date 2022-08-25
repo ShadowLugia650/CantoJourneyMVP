@@ -163,6 +163,10 @@ def drop(event):
             pygame.key.start_text_input()
         else:
             pygame.key.stop_text_input()
+        #check settings collision
+        ui.check_settings_collision(event.pos)
+        #check backarrow collision
+        ui.check_backarrow_collision(event.pos)
         if not choosing_colour:
             for i, btn in enumerate(customs_buttons):
                 if btn.collide_point(event.pos):
@@ -235,4 +239,8 @@ def update():
     render.canvas.blit(player.sprite, (render.canvas.get_width() * 0.1, render.canvas.get_height() * 0.5 - player.sprite.get_height() / 2))
     # player nameplate
     name_button.blit_on(render.canvas)
+    #settings button
+    ui.settings_button.blit_on(render.canvas)
+    #backarrow
+    ui.backarrow.blit_on(render.canvas)
     render.canvas.blit(nametext, NAME_OFFS)
